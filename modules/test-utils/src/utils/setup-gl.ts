@@ -1,7 +1,9 @@
+import type {Device} from '@luma.gl/core';
 import {createTestContext, webglDevice} from '@luma.gl/test-utils';
+import {DummyDevice} from '../dummy-device/dummy-device';
 
 /** Test device */
-export const device = webglDevice;
+export const device: Device = webglDevice || new DummyDevice({});
 
 /** Test context */
 export const gl = createTestContext({

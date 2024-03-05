@@ -18,24 +18,23 @@ _global.HTMLVideoElement = dom.window.HTMLVideoElement;
 _global.requestAnimationFrame = cb => setTimeout(cb, 0);
 _global.cancelAnimationFrame = t => clearTimeout(t);
 
-// import {gl, device} from '@deck.gl/test-utils';
-// import {mockCanvasApi} from './utils/mock-canvas-api';
+import {device} from '@deck.gl/test-utils';
+import {mockCanvasApi} from './utils/mock-canvas-api';
 
-// // Mock Canvas/Context2D calls
-// mockCanvasApi(dom.window.HTMLCanvasElement);
+// Mock Canvas/Context2D calls
+mockCanvasApi(dom.window.HTMLCanvasElement);
 
-// // Create a dummy canvas for the headless gl context
-// const canvas = globalThis.document.createElement('canvas');
-// canvas.width = gl.drawingBufferWidth;
-// canvas.height = gl.drawingBufferHeight;
-// // Deck class uses client width/height to calculate viewport sizes
-// Object.defineProperty(canvas, 'clientWidth', {
-//   value: canvas.width
-// });
-// Object.defineProperty(canvas, 'clientHeight', {
-//   value: canvas.height
-// });
-// gl.canvas = canvas;
-// device.canvasContext.canvas = canvas;
+const canvas = globalThis.document.createElement('canvas');
+canvas.width = device.canvasContext!.width;
+canvas.height = device.canvasContext!.height;
+// Deck class uses client width/height to calculate viewport sizes
+Object.defineProperty(canvas, 'clientWidth', {
+  value: canvas.width
+});
+Object.defineProperty(canvas, 'clientHeight', {
+  value: canvas.height
+});
+// @ts-expect-error overwriting readonly property
+device.canvasContext.canvas = canvas;
 
-import './modules/imports-spec';
+import './modules';
