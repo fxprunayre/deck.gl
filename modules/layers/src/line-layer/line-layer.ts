@@ -182,10 +182,11 @@ export default class LineLayer<DataT = any, ExtraProps extends {} = {}> extends 
     }
   }
 
-  draw({uniforms}): void {
+  draw({parameters, uniforms}): void {
     const {widthUnits, widthScale, widthMinPixels, widthMaxPixels, wrapLongitude} = this.props;
     const model = this.state.model!;
 
+    model.setParameters(parameters);
     model.setUniforms(uniforms);
     model.setUniforms({
       widthUnits: UNIT[widthUnits],

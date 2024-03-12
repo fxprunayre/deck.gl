@@ -184,6 +184,14 @@ export type UpdateParameters<LayerT extends Layer> = {
   changeFlags: ChangeFlags;
 };
 
+export type DrawOptions = {
+  context: LayerContext;
+  moduleParameters: any;
+  parameters: any;
+  renderPass: RenderPass;
+  uniforms: any;
+};
+
 type SharedLayerState = {
   [key: string]: unknown;
 };
@@ -536,9 +544,9 @@ export default abstract class Layer<PropsT extends {} = {}> extends Component<
   }
 
   // If state has a model, draw it with supplied uniforms
-  draw(opts) {
+  draw(opts: DrawOptions) {
     for (const model of this.getModels()) {
-      model.draw(opts);
+      model.draw(opts as any);
     }
   }
 
@@ -1072,17 +1080,25 @@ export default abstract class Layer<PropsT extends {} = {}> extends Component<
 
       context.device.setParametersWebGL({polygonOffset: offsets});
 
+      const deckParameters = this.context.deck?.props.parameters;
+      const layerParameters = this.props.parameters;
+      const mergedParameters = {...deckParameters, ...layerParameters, ...parameters};
+
       // Call subclass lifecycle method
-      context.device.withParametersWebGL(parameters, () => {
-        const opts = {renderPass, moduleParameters, uniforms, parameters, context};
+      const opts: DrawOptions = {
+        context,
+        moduleParameters,
+        parameters: mergedParameters,
+        renderPass,
+        uniforms
+      };
 
-        // extensions
-        for (const extension of this.props.extensions) {
-          extension.draw.call(this, opts, extension);
-        }
+      // extensions
+      for (const extension of this.props.extensions) {
+        extension.draw.call(this, opts, extension);
+      }
 
-        this.draw(opts);
-      });
+      this.draw(opts);
     } finally {
       this.props = currentProps;
     }

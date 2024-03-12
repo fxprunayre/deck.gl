@@ -1021,8 +1021,6 @@ export default class Deck {
   ) {
     const {device, gl} = this.layerManager!.context;
 
-    device.setParametersWebGL(this.props.parameters);
-
     this.props.onBeforeRender({device, gl});
 
     const opts = {
